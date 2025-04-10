@@ -53,27 +53,23 @@ class CustomerController extends Controller
         return view('customers.show', compact('customer'));
     }
 
-    // Mostra o formulário de edição
-    public function edit(Customer $customer)
-    {
-        return view('customers.edit', compact('customer'));
-    }
 
-    // Atualiza um cliente
-    public function update(Request $request, Customer $customer)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => "required|email|unique:customers,email,{$customer->id}",
-            'phone' => 'nullable|string|max:20',
-            'birth_date' => 'nullable|date',
-            'status' => 'required|in:active,inactive',
-        ]);
+    public function update(Request $request, $id)
+{
+    $request->validate([
+        'name' => 'string|max:255',
+        'email' => 'email',
+        'phone' => 'nullable|string|max:20',
+        'birth_date' => 'nullable|date',
+        'status' => 'in:active,inactive',
+    ]);
 
-        $customer->update($request->all());
+    $customer = Customer::findOrFail($id); // <-- Carrega o cliente
 
-        return redirect()->route('customers.index')->with('success', 'Cliente atualizado com sucesso!');
-    }
+    $customer->update($request->all());
+
+    return redirect()->route('customers.index')->with('success', 'Cliente atualizado com sucesso!');
+}
 
     // Deleta um cliente
     public function destroy(Customer $customer)
