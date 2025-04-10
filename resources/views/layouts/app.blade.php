@@ -67,9 +67,9 @@
                             <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                             Clientes
                         </a>
-                        <a class="collapse-item" href="cards.html">
-                            <i class="fas fa-id-card fa-sm fa-fw mr-2 text-gray-400"></i>
-                            Cards
+                        <a class="collapse-item" href="{{route('product.index')}}">
+                            <i class="fas fa-box fa-sm fa-fw mr-2 text-gray-400"></i>
+                            Produtos
                         </a>
                     </div>
                 </div>

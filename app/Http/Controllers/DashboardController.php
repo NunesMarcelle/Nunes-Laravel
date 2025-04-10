@@ -6,10 +6,16 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    // Apenas usuários autenticados podem acessar
 
     public function index()
-    {
-        return view('dashboard.index');
-    }
+{
+    $id_conta = auth()->user()->id_conta;
+
+    $total_clientes = \DB::table('customers')
+    ->where('id_conta', $id_conta)
+    ->where('status', 'active')
+    ->count();
+
+    return view('dashboard.index', compact('total_clientes'));
+}
 }
