@@ -16,6 +16,11 @@ class DashboardController extends Controller
     ->where('status', 'active')
     ->count();
 
-    return view('dashboard.index', compact('total_clientes'));
+    $total_produtos = \DB::table('products')
+    ->where('id_conta', $id_conta)
+    ->where('status', 'active')
+    ->count();
+
+    return view('dashboard.index', compact('total_clientes', 'total_produtos'));
 }
 }

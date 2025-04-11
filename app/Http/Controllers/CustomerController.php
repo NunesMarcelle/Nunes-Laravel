@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
-    // Lista todos os clientes do usuário logado
     public function index()
     {
         if (!Auth::check()) {
@@ -18,13 +17,8 @@ class CustomerController extends Controller
         $customers = Customer::where('id_conta', Auth::user()->id_conta)->get();
         return view('customers.index', compact('customers'));
     }
-    // Mostra o formulário de criação
-    public function create()
-    {
-        return view('customers.create');
-    }
 
-    // Salva um novo cliente
+
     public function store(Request $request)
     {
         $request->validate([
@@ -47,7 +41,6 @@ class CustomerController extends Controller
         return redirect()->route('customers.index')->with('success', 'Cliente cadastrado com sucesso!');
     }
 
-    // Exibe um cliente específico
     public function show(Customer $customer)
     {
         return view('customers.show', compact('customer'));
@@ -71,7 +64,6 @@ class CustomerController extends Controller
     return redirect()->route('customers.index')->with('success', 'Cliente atualizado com sucesso!');
 }
 
-    // Deleta um cliente
     public function destroy(Customer $customer)
     {
         $customer->delete();

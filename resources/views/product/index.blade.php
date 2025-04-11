@@ -4,7 +4,12 @@
 
 @section('content')
 <div class="container">
+    <div class="d-sm-flex justify-content-end ">
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                class="fas fa-download fa-sm text-white-50"></i> Gerar relatório</a>
+    </div>
     <h2 class="mb-4 mt-4">Gerenciar Produtos</h2>
+
 
     <div class="card shadow rounded">
         <div class="card-body">
@@ -212,6 +217,8 @@
                             <label>Preço</label>
                             <input type="number" step="0.01" name="price" class="form-control" required>
                         </div>
+
+
                         <div class="form-group col-md-3">
                             <label>Estoque</label>
                             <input type="number" name="amount" class="form-control" required>

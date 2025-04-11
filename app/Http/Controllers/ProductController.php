@@ -11,7 +11,11 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::all();
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Você precisa estar autenticado.');
+        }
+
+        $products = Product::where('id_conta', Auth::user()->id_conta)->get();
         return view('product.index', compact('products'));
     }
 
