@@ -8,6 +8,10 @@ use App\Http\Controllers\ProductController;
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
+Route::get('/', function () {
+    return redirect()->route('login'); 
+});
+
 
 
 
