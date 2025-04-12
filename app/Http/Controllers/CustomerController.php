@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
+use Dompdf\Dompdf;
+use Barryvdh\DomPDF\Facade as PDF;
+use Dompdf\Options;
 
 class CustomerController extends Controller
 {
@@ -18,6 +22,24 @@ class CustomerController extends Controller
         return view('customers.index', compact('customers'));
     }
 
+    public function gerarRelatorioPDF()
+    {
+        $clientes = Customer::where('id_conta', Auth::user()->id_conta)->get();
+
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($options);
+
+        $html = view('customers.relatorio', compact('clientes'))->render();
+
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        return $dompdf->stream('relatorio-clientes.pdf', ['Attachment' => false]);
+    }
 
 
     public function store(Request $request)

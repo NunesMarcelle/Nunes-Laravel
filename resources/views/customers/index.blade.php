@@ -4,8 +4,14 @@
 
 @section('content')
 <div class="container">
+    <div class="text-right">
+        <a class="btn btn-danger" href="{{ route('customers.relatorio.pdf') }}" target="_blank">
+            <i class="fas fa-file-pdf fa-sm fa-fw mr-2 text-400"></i>
+            Relatório em PDF
+        </a>
+    </div>
     <h2 class="mb-4 mt-4">Gerenciar Clientes</h2>
-    
+
 
     <div class="card shadow rounded">
         <div class="card-body">
@@ -13,6 +19,8 @@
                 <button class="btn btn-primary" data-toggle="modal" data-target="#addCustomerModal">
                     <i class="fas fa-user-plus mr-1"></i> Adicionar Cliente
                 </button>
+
+
 
                 <div>
                     <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar cliente...">

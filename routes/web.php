@@ -15,6 +15,7 @@ Route::get('/customers', [CustomerController::class, 'index'])->name('customers.
 Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
 Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
 Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
+Route::get('/customers/relatorio/pdf', [CustomerController::class, 'gerarRelatorioPDF'])->name('customers.relatorio.pdf');
 
 Route::get('/product', [ProductController::class, 'index'])->name('product.index');
 Route::post('/product', [ProductController::class, 'store'])->name('product.store');
