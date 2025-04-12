@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Product;
 
 class CustomerController extends Controller
 {
@@ -17,6 +17,7 @@ class CustomerController extends Controller
         $customers = Customer::where('id_conta', Auth::user()->id_conta)->get();
         return view('customers.index', compact('customers'));
     }
+
 
 
     public function store(Request $request)

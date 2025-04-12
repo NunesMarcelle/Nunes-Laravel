@@ -70,7 +70,7 @@
                             Clientes
                         </a>
                         <a class="collapse-item" href="{{route('product.index')}}">
-                            <i class="fas fa-box fa-sm fa-fw mr-2 text-gray-400"></i>
+                            <i class="fas fa-box fa-sm fa-fw mr-2 text-400"></i>
                             Produtos
                         </a>
                     </div>

@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Dompdf\Dompdf;
+use Barryvdh\DomPDF\Facade as PDF;
+use Dompdf\Options;
+
 
 
 class ProductController extends Controller
@@ -18,6 +22,26 @@ class ProductController extends Controller
         $products = Product::where('id_conta', Auth::user()->id_conta)->get();
         return view('product.index', compact('products'));
     }
+
+    public function gerarRelatorioPDF()
+    {
+        $produtos = Product::where('id_conta', Auth::user()->id_conta)->get();
+
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($options);
+
+        $html = view('product.relatorio', compact('produtos'))->render();
+
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        return $dompdf->stream('relatorio-produtos.pdf', ['Attachment' => false]);
+    }
+
 
     public function store(Request $request)
     {

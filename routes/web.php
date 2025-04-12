@@ -10,6 +10,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 
 
 
+
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
 Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
 Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
@@ -19,6 +20,8 @@ Route::get('/product', [ProductController::class, 'index'])->name('product.index
 Route::post('/product', [ProductController::class, 'store'])->name('product.store');
 Route::put('/product/{product}', [ProductController::class, 'update'])->name('product.update');
 Route::delete('/product/{product}', [ProductController::class, 'destroy'])->name('product.destroy');
+Route::get('/product/relatorio/pdf', [ProductController::class, 'gerarRelatorioPDF'])->name('product.relatorio.pdf');
+
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.perform');

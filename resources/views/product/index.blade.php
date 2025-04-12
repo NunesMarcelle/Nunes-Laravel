@@ -4,10 +4,14 @@
 
 @section('content')
 <div class="container">
-    <div class="d-sm-flex justify-content-end ">
-        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                class="fas fa-download fa-sm text-white-50"></i> Gerar relatório</a>
+    <div class="text-right">
+        <a class="btn btn-danger" href="{{ route('product.relatorio.pdf') }}" target="_blank">
+            <i class="fas fa-file-pdf fa-sm fa-fw mr-2 text-400"></i>
+            Relatório em PDF
+        </a>
     </div>
+
+
     <h2 class="mb-4 mt-4">Gerenciar Produtos</h2>
 
 
