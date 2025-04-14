@@ -98,6 +98,13 @@
                 </div>
             </li>
 
+            <!-- Nav Item - Agendamentos -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('schedules.index') }}">
+                    <i class="fas fa-calendar-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                    <span>Agendamentos</span>
+                </a>
+            </li>
 
 
 
