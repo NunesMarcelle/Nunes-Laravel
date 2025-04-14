@@ -4,15 +4,18 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ProductController;
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 Route::get('/', function () {
-    return redirect()->route('login'); 
+    return redirect()->route('login');
 });
 
-
+Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules.index');
+Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
+Route::get('/schedules/events', [ScheduleController::class, 'getEvents']);
 
 
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
