@@ -87,7 +87,7 @@
                 <div id="collapseVenda" class="collapse" aria-labelledby="headingVenda" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="{{ route('sales_product.index') }}">
-                            <i class="fas fa-user-plus fa-sm fa-fw mr-2 text-400"></i>
+                            <i class="fas fa-shopping-cart fa-sm fa-fw mr-2 text-400"></i>
                             Vender Produto
                         </a>
                         <a class="collapse-item" href="{{ route('product.index') }}">
