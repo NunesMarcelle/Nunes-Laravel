@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\SalesProductController;
 use App\Http\Controllers\ProductController;
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
@@ -12,6 +13,10 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+Route::get('/sales_product', [SalesProductController::class, 'index'])->name('sales_product.index');
+Route::post('/sales_product', [SalesProductController::class, 'store'])->name('sales_product.store');
+Route::delete('/sales_product/{id}', [SalesProductController::class, 'destroy'])->name('sales_product.destroy');
 
 Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules.index');
 Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
