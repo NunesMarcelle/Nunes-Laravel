@@ -15,6 +15,7 @@
     <!-- FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
 
+
     <!-- Custom styles -->
     <style>
         .login-container {
@@ -37,6 +38,11 @@
 
     <div class="container login-container">
         <div class="card o-hidden border-0 shadow-lg login-card">
+            @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+            @endif
             <div class="row no-gutters">
 
                 <!-- Imagem -->

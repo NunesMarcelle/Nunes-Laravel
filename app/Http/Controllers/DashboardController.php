@@ -40,10 +40,13 @@ class DashboardController extends Controller
             ->whereYear('created_at', date('Y'))
             ->count();
 
-        foreach ($clientsByMonth as $row) {
-            $months[] = $row->month . '/' . $row->year;
-            $clientCounts[] = $row->total_clients;
-        }
+            $months = [];
+            $clientCounts = [];
+
+            foreach ($clientsByMonth as $row) {
+                $months[] = $row->month . '/' . $row->year;
+                $clientCounts[] = $row->total_clients;
+            }
 
         return view('dashboard.index', compact('total_clientes', 'total_produtos', 'months', 'clientCounts', 'schedules', 'total_vendas_mes'));
     }

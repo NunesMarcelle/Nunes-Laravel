@@ -8,6 +8,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SalesProductController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\SalesServiceController;
 use App\Http\Controllers\ServiceController;
 
 
@@ -22,9 +23,15 @@ Route::get('/register', function () {
 })->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store']);
 
+Route::get('/sales_service', [SalesServiceController::class, 'index'])->name('sales_service.index');
+Route::post('/sales_service', [SalesServiceController::class, 'store'])->name('sales_service.store');
+Route::put('/sales_service/{id}', [SalesServiceController::class, 'update'])->name('sales_service.update');
+Route::delete('/sales_service/{sales_service}', [SalesServiceController::class, 'destroy'])->name('sales_service.destroy');
 
 Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
 Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
+Route::put('/services/{id}', [ServiceController::class, 'update'])->name('services.update');
+Route::get('/services/relatorio/pdf', [ServiceController::class, 'gerarRelatorioPDF'])->name('services.relatorio.pdf');
 Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
 
 Route::get('/sales_product', [SalesProductController::class, 'index'])->name('sales_product.index');

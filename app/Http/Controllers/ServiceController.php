@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Dompdf\Dompdf;
+use Barryvdh\DomPDF\Facade as PDF;
+use Dompdf\Options;
+
 
 class ServiceController extends Controller
 {
@@ -37,19 +42,45 @@ class ServiceController extends Controller
         return view('services.edit', compact('service'));
     }
 
-    public function update(Request $request, Service $service)
+    public function gerarRelatorioPDF()
+    {
+        $services = Service::where('id_conta', Auth::user()->id_conta)->get();
+
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($options);
+
+        $html = view('services.relatorio', compact('services'))->render();
+
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        return $dompdf->stream('relatorio-servicos.pdf', ['Attachment' => false]);
+    }
+
+
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'id_conta' => 'required|integer',
             'name' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
             'price' => 'required|numeric',
-            'status' => 'required|boolean',
+            'status' => 'required|in:active,inactive',
         ]);
 
-        $service->update($request->all());
+        $service = Service::findOrFail($id);
+        $service->name = $request->name;
+        $service->description = $request->description;
+        $service->price = $request->price;
+        $service->status = $request->status;
+        $service->save();
 
-        return redirect()->route('services.index')->with('success', 'Serviço atualizado com sucesso.');
+        return redirect()->back()->with('success', 'Serviço atualizado com sucesso!');
     }
+
 
     public function destroy(Service $service)
     {

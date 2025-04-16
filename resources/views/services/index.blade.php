@@ -4,13 +4,20 @@
 
 @section('content')
 <div class="container">
+    <div class="d-flex justify-content-end mb-3">
+        <a class="btn btn-danger" href="{{ route('services.relatorio.pdf') }}" target="_blank">
+            <i class="fas fa-file-pdf fa-sm fa-fw mr-2 text-400"></i>
+            Relatório em PDF
+        </a>
+    </div>
 
     <h2 class="mb-4 mt-4">Gerenciar Serviços</h2>
+
+    <div class="card-body">
 
     <div class="card shadow rounded">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <!-- Botão para adicionar serviço -->
                 <button class="btn btn-primary" data-toggle="modal" data-target="#addServiceModal">
                     <i class="fas fa-plus mr-1"></i> Adicionar Serviço
                 </button>
@@ -88,8 +95,8 @@
                                         </span>
                                     </td>
                                     <td class="text-center">
-                                        <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#viewServiceModal-{{ $service->id }}">
-                                            <i class="fas fa-eye"></i>
+                                        <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#editServiceModal-{{ $service->id }}">
+                                            <i class="fas fa-edit"></i>
                                         </button>
 
                                         <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteServiceModal-{{ $service->id }}">
@@ -98,32 +105,56 @@
                                     </td>
                                 </tr>
 
-                                <!-- Modal Visualizar Serviço -->
-                                <div class="modal fade" id="viewServiceModal-{{ $service->id }}" tabindex="-1" role="dialog" aria-labelledby="viewServiceModalLabel-{{ $service->id }}" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header text-grey">
-                                                <h5 class="modal-title" id="viewServiceModalLabel-{{ $service->id }}">Detalhes do Serviço</h5>
-                                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Fechar">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
+                                <!-- Modal Editar Serviço -->
+                                <div class="modal fade" id="editServiceModal-{{ $service->id }}" tabindex="-1" role="dialog" aria-labelledby="editServiceModalLabel-{{ $service->id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <form method="POST" action="{{ route('services.update', $service->id) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="modal-content">
+                                                <div class="modal-header text-grey">
+                                                    <h5 class="modal-title" id="editServiceModalLabel-{{ $service->id }}">Editar Serviço</h5>
+                                                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Fechar">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+
+                                                <div class="modal-body">
+                                                    <div class="form-row">
+                                                        <div class="form-group col-md-4">
+                                                            <label>Nome do Serviço</label>
+                                                            <input type="text" name="name" class="form-control" value="{{ $service->name }}" required>
+                                                        </div>
+
+                                                        <div class="form-group col-md-4">
+                                                            <label>Descrição</label>
+                                                            <input type="text" name="description" class="form-control" value="{{ $service->description }}" required>
+                                                        </div>
+
+                                                        <div class="form-group col-md-4">
+                                                            <label>Preço</label>
+                                                            <input type="number" step="0.01" name="price" class="form-control" value="{{ $service->price }}" required>
+                                                        </div>
+
+                                                        <div class="form-group col-md-12">
+                                                            <label>Status</label>
+                                                            <select name="status" class="form-control" required>
+                                                                <option value="active" {{ $service->status == 'active' ? 'selected' : '' }}>Ativo</option>
+                                                                <option value="inactive" {{ $service->status == 'inactive' ? 'selected' : '' }}>Inativo</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-success">Atualizar</button>
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                                </div>
                                             </div>
-                                            <div class="modal-body">
-                                                <p><strong>Nome:</strong> {{ $service->name }}</p>
-                                                <p><strong>Preço:</strong> R$ {{ number_format($service->price, 2, ',', '.') }}</p>
-                                                <p><strong>Status:</strong>
-                                                    <span class="badge badge-{{ $service->status == 'active' ? 'success' : 'secondary' }}">
-                                                        {{ $service->status == 'active' ? 'Ativo' : 'Inativo' }}
-                                                    </span>
-                                                </p>
-                                                <p><strong>Data de Criação:</strong> {{ \Carbon\Carbon::parse($service->created_at)->format('d/m/Y H:i') }}</p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                                            </div>
-                                        </div>
+                                        </form>
                                     </div>
                                 </div>
+
 
                                 {{-- Modal Excluir Serviço --}}
                                 <div class="modal fade" id="deleteServiceModal-{{ $service->id }}" tabindex="-1" role="dialog" aria-labelledby="deleteServiceModalLabel-{{ $service->id }}" aria-hidden="true">

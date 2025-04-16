@@ -74,6 +74,11 @@
                             <i class="fas fa-box fa-sm fa-fw mr-2 text-400"></i>
                             Produtos
                         </a>
+
+                        <a class="collapse-item" href="{{route('services.index')}}">
+                            <i class="fas fa-tools fa-sm fa-fw mr-2 text-400"></i>
+                            Serviços
+                        </a>
                     </div>
                 </div>
             </li>
@@ -90,8 +95,8 @@
                             <i class="fas fa-shopping-cart fa-sm fa-fw mr-2 text-400"></i>
                             Vender Produto
                         </a>
-                        <a class="collapse-item" href="{{ route('product.index') }}">
-                            <i class="fas fa-box-open fa-sm fa-fw mr-2 text-gray-400"></i>
+                        <a class="collapse-item" href="{{ route('sales_service.index') }}">
+                            <i class="fas fa-tools fa-sm fa-fw mr-2 text-400"></i>
                             Vender serviço
                         </a>
                     </div>

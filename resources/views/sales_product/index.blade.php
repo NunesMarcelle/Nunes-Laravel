@@ -234,15 +234,13 @@
                     </div>
 
                     <script>
-                        // Atualizar preço unitário ao selecionar produto
                         document.getElementById('product_select').addEventListener('change', function() {
                             const selectedOption = this.options[this.selectedIndex];
                             const price = parseFloat(selectedOption.getAttribute('data-price')) || 0;
                             document.getElementById('unit_price').value = price.toFixed(2);
-                            atualizarPrecoTotal();  // Atualiza o preço total após mudar o produto
+                            atualizarPrecoTotal();
                         });
 
-                        // Função para atualizar o preço total
                         function atualizarPrecoTotal() {
                             const quantidade = parseFloat(document.getElementById('quantity').value) || 0;
                             const precoUnitario = parseFloat(document.getElementById('unit_price').value) || 0;
@@ -252,7 +250,6 @@
                             document.getElementById('total_price').value = total.toFixed(2);
                         }
 
-                        // Adiciona os eventos para atualizar o total sempre que os valores forem alterados
                         document.getElementById('quantity').addEventListener('input', atualizarPrecoTotal);
                         document.getElementById('discount').addEventListener('input', atualizarPrecoTotal);
                     </script>
