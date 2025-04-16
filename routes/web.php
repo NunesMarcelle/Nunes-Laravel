@@ -7,6 +7,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SalesProductController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ServiceController;
 
 
@@ -15,6 +16,12 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+Route::get('/register', function () {
+    return view('auth.register');
+})->name('register');
+Route::post('/register', [RegisteredUserController::class, 'store']);
+
 
 Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
 Route::post('/services', [ServiceController::class, 'store'])->name('services.store');

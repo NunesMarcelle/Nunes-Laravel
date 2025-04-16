@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Login</title>
+    <title>Cadastro</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -28,8 +28,6 @@
             max-width: 900px;
             width: 100%;
         }
-
-
     </style>
 </head>
 
@@ -46,28 +44,35 @@
                 <div class="col-md-5">
                     <div class="p-4">
                         <div class="text-center">
-                            <h1 class="h4 text-gray-900 mb-4">Bem-vindo de volta!</h1>
+                            <h1 class="h4 text-gray-900 mb-4">Criar Conta</h1>
                         </div>
-                        <form method="POST" action="{{ route('login') }}" class="user">
+                        <form method="POST" action="{{ route('register') }}" class="user">
                             @csrf
                             <div class="form-group">
-                                <input type="email" name="email" class="form-control form-control-user"
-                                       placeholder="Digite seu e-mail" required>
+                                <input type="text" name="name" class="form-control form-control-user" placeholder="Nome Completo" required>
                             </div>
                             <div class="form-group">
-                                <input type="password" name="password" class="form-control form-control-user"
-                                       placeholder="Senha" required>
+                                <input type="email" name="email" class="form-control form-control-user" placeholder="Digite seu e-mail" required>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="text" name="company_name" class="form-control form-control-user" placeholder="Nome da empresa" required>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="password" name="password" class="form-control form-control-user" placeholder="Senha" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" name="password_confirmation" class="form-control form-control-user" placeholder="Confirmar Senha" required>
                             </div>
                             <button type="submit" class="btn btn-primary btn-user btn-block">
-                                Entrar
+                                Registrar
                             </button>
                         </form>
                         <hr>
+
                         <div class="text-center">
-                            <a class="small" href="forgot-password.html">Esqueceu a senha?</a>
-                        </div>
-                        <div class="text-center">
-                            <a class="small" href="{{ url('/register') }}">Criar uma conta!</a>
+                            <a class="small" href="{{ url('/login') }}">Já tenho conta</a>
                         </div>
                     </div>
                 </div>
