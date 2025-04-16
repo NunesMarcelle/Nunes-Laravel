@@ -7,12 +7,18 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SalesProductController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ServiceController;
+
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
+Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
 
 Route::get('/sales_product', [SalesProductController::class, 'index'])->name('sales_product.index');
 Route::post('/sales_product', [SalesProductController::class, 'store'])->name('sales_product.store');

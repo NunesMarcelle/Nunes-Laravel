@@ -20,15 +20,16 @@ class SalesProductController extends Controller
 
         $products = DB::table('products')
                     ->where('id_conta', $idConta)
-                    ->get();
+                    ->where('status', 'active')
+        ->get();
 
         $customers = DB::table('customers')
                     ->where('id_conta', $idConta)
+                    ->where('status','active')
                     ->get();
 
         return view('sales_product.index', compact('sales', 'products', 'customers'));
     }
-
 
 
     public function store(Request $request)
@@ -44,6 +45,14 @@ class SalesProductController extends Controller
 
         $idConta = auth()->user()->id_conta;
 
+        // Buscar o produto
+        $product = Product::find($request->product_id);
+
+        if ($product->amount < $request->quantity) {
+            return redirect()->back()->withErrors(['quantity' => 'Quantidade em estoque insuficiente.']);
+        }
+
+        // Registrar a venda
         $saleProduct = new SalesProduct();
         $saleProduct->customer_id = $request->customer_id;
         $saleProduct->product_id = $request->product_id;
@@ -54,8 +63,12 @@ class SalesProductController extends Controller
         $saleProduct->id_conta = $idConta;
         $saleProduct->save();
 
+        $product->amount -= $request->quantity;
+        $product->save();
+
         return redirect()->route('sales_product.index')->with('success', 'Venda registrada com sucesso!');
     }
+
 
     public function destroy($id)
 {

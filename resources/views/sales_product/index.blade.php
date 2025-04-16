@@ -172,7 +172,6 @@
 </div>
 
 {{-- Modal Adicionar Venda --}}
-{{-- Modal Adicionar Venda --}}
 <div class="modal fade" id="addSaleModal" tabindex="-1" role="dialog" aria-labelledby="addSaleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <form method="POST" action="{{ route('sales_product.store') }}">
