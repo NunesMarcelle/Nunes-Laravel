@@ -23,10 +23,12 @@ Route::get('/register', function () {
 })->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store']);
 
+
 Route::get('/sales_service', [SalesServiceController::class, 'index'])->name('sales_service.index');
 Route::post('/sales_service', [SalesServiceController::class, 'store'])->name('sales_service.store');
 Route::put('/sales_service/{id}', [SalesServiceController::class, 'update'])->name('sales_service.update');
 Route::delete('/sales_service/{sales_service}', [SalesServiceController::class, 'destroy'])->name('sales_service.destroy');
+Route::patch('/sales-service/{id}/mark-paid', [SalesServiceController::class, 'markAsPaid'])->name('sales_service.markPaid');
 
 Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
 Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
@@ -37,6 +39,7 @@ Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->nam
 Route::get('/sales_product', [SalesProductController::class, 'index'])->name('sales_product.index');
 Route::post('/sales_product', [SalesProductController::class, 'store'])->name('sales_product.store');
 Route::delete('/sales_product/{id}', [SalesProductController::class, 'destroy'])->name('sales_product.destroy');
+Route::patch('/sales/{id}/mark-paid', [SalesProductController::class, 'markAsPaid'])->name('sales.markPaid');
 
 Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules.index');
 Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');

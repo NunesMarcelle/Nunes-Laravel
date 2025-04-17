@@ -31,6 +31,15 @@ class SalesProductController extends Controller
         return view('sales_product.index', compact('sales', 'products', 'customers'));
     }
 
+        public function markAsPaid($id)
+    {
+        $sale = SalesProduct::findOrFail($id);
+        $sale->status = 'completed';
+        $sale->save();
+
+        return redirect()->back()->with('success', 'Pagamento recebido com sucesso!');
+    }
+
 
     public function store(Request $request)
     {

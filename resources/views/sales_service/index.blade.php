@@ -75,6 +75,7 @@
                                 <th>Nome do Serviço</th>
                                 <th>Cliente</th>
                                 <th>Preço</th>
+                                <th>Status</th>
                                 <th class="text-center">Ações</th>
                             </tr>
                         </thead>
@@ -85,6 +86,15 @@
                                     <td>{{ $service->customer->name }}</td>
 
                                     <td>R$ {{ number_format($service->total_price, 2, ',', '.') }}</td>
+                                    <td>
+                                        @if($service->status === 'pending')
+                                            <span class="badge bg-warning text-white">Pendente</span>
+                                        @elseif($service->status === 'completed')
+                                            <span class="badge bg-success text-white">Pago</span>
+                                        @else
+                                            <span class="badge bg-secondary">{{ ucfirst($service->status) }}</span>
+                                        @endif
+                                    </td>
 
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#editSalesServiceModal-{{ $service->id }}">
@@ -93,6 +103,16 @@
                                         <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteSalesServiceModal-{{ $service->id }}">
                                             <i class="fas fa-trash"></i>
                                         </button>
+
+                                        @if($service->status === 'pending')
+                                        <form method="POST" action="{{ route('sales_service.markPaid', $service->id) }}" class="d-inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Confirmar recebimento do pagamento?')">
+                                                <i class="fas fa-money-bill-wave"></i> Receber
+                                            </button>
+                                        </form>
+                                        @endif
                                     </td>
                                 </tr>
                                 <!-- Modal Editar Serviço de Venda -->

@@ -43,6 +43,16 @@ class SalesServiceController extends Controller
         return redirect()->route('sales_service.index')->with('success', 'Serviço adicionado com sucesso!');
     }
 
+    public function markAsPaid($id)
+{
+    $service = SalesService::findOrFail($id);
+    $service->status = 'completed';
+    $service->save();
+
+    return redirect()->back()->with('success', 'Pagamento recebido com sucesso!');
+}
+
+
     public function update(Request $request, $id)
 {
     $request->validate([

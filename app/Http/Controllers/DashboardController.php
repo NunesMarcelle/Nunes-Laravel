@@ -34,11 +34,23 @@ class DashboardController extends Controller
             ->orderBy(DB::raw('YEAR(created_at), MONTH(created_at)'))
             ->get();
 
-            $total_vendas_mes = DB::table('sales_product')
+
+            $total_produtos = DB::table('sales_product')
             ->where('id_conta', $id_conta)
+            ->where('status', 'completed')
             ->whereMonth('created_at', date('m'))
             ->whereYear('created_at', date('Y'))
-            ->count();
+            ->sum('total_price');
+
+
+            $total_servicos = DB::table('sales_service')
+            ->where('id_conta', $id_conta)
+            ->where('status', 'completed') 
+            ->whereMonth('created_at', date('m'))
+            ->whereYear('created_at', date('Y'))
+            ->sum('total_price');
+
+            $total_mes = $total_produtos + $total_servicos;
 
             $months = [];
             $clientCounts = [];
@@ -48,6 +60,6 @@ class DashboardController extends Controller
                 $clientCounts[] = $row->total_clients;
             }
 
-        return view('dashboard.index', compact('total_clientes', 'total_produtos', 'months', 'clientCounts', 'schedules', 'total_vendas_mes'));
+        return view('dashboard.index', compact('total_clientes', 'total_mes', 'total_servicos', 'total_produtos', 'months', 'clientCounts', 'schedules'));
     }
 }

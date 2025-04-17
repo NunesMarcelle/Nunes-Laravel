@@ -99,8 +99,21 @@
                                         <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteSaleModal-{{ $sale->id }}">
                                             <i class="fas fa-trash"></i>
                                         </button>
+
+                                            @if($sale->status != 'completed')
+                                            <form method="POST" action="{{ route('sales.markPaid', $sale->id) }}" style="display:inline-block;">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Confirmar recebimento do pagamento?')">
+                                                    <i class="fas fa-money-bill-wave"></i> Receber
+                                                </button>
+                                            </form>
+                                        @endif
+
                                     </td>
                                 </tr>
+
+
 
                                 <!-- Modal Visualizar Venda -->
                                 <div class="modal fade" id="viewSaleModal-{{ $sale->id }}" tabindex="-1" role="dialog" aria-labelledby="viewSaleModalLabel-{{ $sale->id }}" aria-hidden="true">
