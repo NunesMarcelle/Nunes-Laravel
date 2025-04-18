@@ -25,13 +25,22 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'company_name' => ['required', 'string', 'max:255'],
+            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+
         ]);
+
+        $imagePath = null;
+
+        if ($request->hasFile('img')) {
+            $imagePath = $request->file('img')->store('users', 'public');
+        }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'company_name' => $request->company_name,
+            'img' => $imagePath,
         ]);
 
         $user->id_conta = $user->id;

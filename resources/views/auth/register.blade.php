@@ -46,7 +46,7 @@
                         <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">Criar Conta</h1>
                         </div>
-                        <form method="POST" action="{{ route('register') }}" class="user">
+                        <form method="POST" action="{{ route('register') }}" class="user" enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
                                 <input type="text" name="name" class="form-control form-control-user" placeholder="Nome Completo" required>
@@ -65,6 +65,12 @@
                             <div class="form-group">
                                 <input type="password" name="password_confirmation" class="form-control form-control-user" placeholder="Confirmar Senha" required>
                             </div>
+
+                            <div class="form-group">
+                                <label for="image">Foto de perfil</label>
+                                <input type="file" name="img" id="image" class="form-control-file" accept="image/*">
+                            </div>
+
                             <button type="submit" class="btn btn-primary btn-user btn-block">
                                 Registrar
                             </button>
