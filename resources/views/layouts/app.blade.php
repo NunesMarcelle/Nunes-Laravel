@@ -34,13 +34,21 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{route('dashboard')}}">
-                <div class="sidebar-brand-icon rotate-n-15">
+            <div class="user-img-block text-center mt-4 mb-2">
+                <div style="width: 150px; height: 150px; margin: 0 auto; overflow: hidden; border-radius: 10px;">
+                    @if (Auth::user()->img)
+                        <img src="{{ asset('storage/' . Auth::user()->img) }}" alt="Imagem do usuário"
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                    @else
+                        <img src="{{ asset('storage/default-avatar.jpg') }}" alt="Imagem padrão"
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                    @endif
                 </div>
-                <div class="sidebar-brand-text mx-3">
-                    {{ Auth::user()->company_name}}
-                </div>
-            </a>
+            </div>
+
+            <div class="sidebar-brand-text mx-3 text-center text-white">
+                {{ Auth::user()->company_name }}
+            </div>
 
 
 
