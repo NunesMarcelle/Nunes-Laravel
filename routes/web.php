@@ -9,6 +9,7 @@ use App\Http\Controllers\SalesProductController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\SalesServiceController;
+use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ServiceController;
 
 
@@ -22,6 +23,11 @@ Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store']);
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
+    Route::put('/perfil', [PerfilController::class, 'update'])->name('perfil.update');
+});
 
 
 Route::get('/sales_service', [SalesServiceController::class, 'index'])->name('sales_service.index');
