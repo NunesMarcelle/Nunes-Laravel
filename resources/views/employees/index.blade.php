@@ -76,6 +76,7 @@
                                 <th>Nome</th>
                                 <th>Email</th>
                                 <th>Cargo</th>
+                                <th>Salário</th>
                                 <th>Status</th>
                                 <th class="text-center">Ações</th>
                             </tr>
@@ -86,11 +87,13 @@
                                     <td>{{ $employee->name }}</td>
                                     <td>{{ $employee->email }}</td>
                                     <td>{{ $employee->position }}</td>
+                                    <td>R${{ $employee->salary }}</td>
                                     <td>
                                         <span class="badge badge-{{ $employee->status == 'active' ? 'success' : 'secondary' }}">
                                             {{ $employee->status == 'active' ? 'Ativo' : 'Inativo' }}
                                         </span>
                                     </td>
+
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#editEmployeeModal-{{ $employee->id }}">
                                             <i class="fas fa-edit"></i>
@@ -127,6 +130,12 @@
                                                         <label>Cargo</label>
                                                         <input type="text" name="position" class="form-control" value="{{ $employee->position }}" required>
                                                     </div>
+
+                                                    <div class="form-group">
+                                                        <label>Salário</label>
+                                                        <input type="text" name="salary" class="form-control" value="{{ $employee->salary }}" required>
+                                                    </div>
+
                                                     <div class="form-group">
                                                         <label>Status</label>
                                                         <select name="status" class="form-control">

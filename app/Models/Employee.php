@@ -17,6 +17,7 @@ class Employee extends Model
         'position',
         'salary',
         'access_level',
+        'status',
     ];
 }
 
