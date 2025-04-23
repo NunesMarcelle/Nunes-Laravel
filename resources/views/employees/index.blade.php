@@ -5,10 +5,10 @@
 @section('content')
 <div class="container">
     <div class="text-right">
-       {{-- <a class="btn btn-danger" href="{{ route('employee.relatorio.pdf') }}" target="_blank">
+        <a class="btn btn-danger" href="{{ route('employees.relatorio.pdf') }}" target="_blank">
             <i class="fas fa-file-pdf fa-sm fa-fw mr-2 text-400"></i>
             Relatório em PDF
-        </a>--}}
+        </a>
     </div>
 
     <h2 class="mb-4 mt-4">Gerenciar Funcionários</h2>

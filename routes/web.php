@@ -34,6 +34,7 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
 Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
 Route::put('/employees/{id}', [EmployeeController::class, 'update'])->name('employees.update');
+Route::get('/employees/relatorio/pdf', [EmployeeController::class, 'gerarRelatorioPDF'])->name('employees.relatorio.pdf');
 Route::delete('/employees/{sales_service}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
 
 

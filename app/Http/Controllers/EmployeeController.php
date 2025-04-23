@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Dompdf\Dompdf;
+use Barryvdh\DomPDF\Facade as PDF;
+use Dompdf\Options;
 
 class EmployeeController extends Controller
 {
@@ -12,6 +15,25 @@ class EmployeeController extends Controller
     {
         $employees = Employee::all();
         return view('employees.index', compact('employees'));
+    }
+
+    public function gerarRelatorioPDF()
+    {
+        $employees = Employee::where('id_conta', Auth::user()->id_conta)->get();
+
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($options);
+
+        $html = view('employees.relatorio', compact('employees'))->render();
+
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        return $dompdf->stream('relatorio-funcionarios.pdf', ['Attachment' => false]);
     }
 
 
