@@ -9,8 +9,8 @@ use App\Http\Controllers\SalesProductController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\SalesServiceController;
-use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ServiceController;
 
 
@@ -31,13 +31,10 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/perfil', [PerfilController::class, 'update'])->name('perfil.update');
 });
 
-
-
 Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
 Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
-Route::put('/employees', [EmployeeController::class, 'update'])->name('employees.update');
-Route::delete('/employees', [EmployeeController::class, 'destroy'])->name('employees.destroy');
-
+Route::put('/employees/{id}', [EmployeeController::class, 'update'])->name('employees.update');
+Route::delete('/employees/{sales_service}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
 
 
 Route::get('/sales_service', [SalesServiceController::class, 'index'])->name('sales_service.index');

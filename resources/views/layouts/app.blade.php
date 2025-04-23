@@ -85,10 +85,6 @@
                             <i class="fas fa-tools fa-sm fa-fw mr-2 text-400"></i>
                             Serviços
                         </a>
-
-                        <a class="collapse-item" href="{{route('employees.index')}}">
-                            <i class="fas fa-users fa-sm fa-fw mr-2 text--400"></i>                            Funcionários
-                        </a>
                     </div>
                 </div>
             </li>

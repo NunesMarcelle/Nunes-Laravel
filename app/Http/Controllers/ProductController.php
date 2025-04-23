@@ -62,9 +62,6 @@ class ProductController extends Controller
             'status' => $request->status,
         ]);
 
-
-
-
         return redirect()->route('product.index')->with('success', 'Produto criado com sucesso');
     }
 
