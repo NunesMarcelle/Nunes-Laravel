@@ -24,7 +24,6 @@ Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store']);
-Route::post('/users', [RegisteredUserController::class, 'store'])->name('users.store');
 
 
 Route::middleware(['auth'])->group(function () {

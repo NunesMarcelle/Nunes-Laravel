@@ -1,6 +1,5 @@
 @extends('layouts.app')
 
-@section('title', 'Funcionários')
 
 @section('content')
 <div class="container">
@@ -98,39 +97,7 @@
                                             <i class="fas fa-trash"></i>
                                         </button>
 
-                                        <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#createUserModal">
-                                            Criar Acesso
-                                        </button>
-
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
-                                                    @csrf
-                                                    <div class="form-group">
-                                                        <label for="name">Nome</label>
-                                                        <input type="text" name="name" class="form-control" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="email">E-mail</label>
-                                                        <input type="email" name="email" class="form-control" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="password">Senha</label>
-                                                        <input type="password" name="password" class="form-control" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="company_name">Nome da Empresa</label>
-                                                        <input type="text" name="company_name" class="form-control" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="img">Imagem de Perfil (Opcional)</label>
-                                                        <input type="file" name="img" class="form-control">
-                                                    </div>
-                                                    <button type="submit" class="btn btn-primary">Criar Acesso</button>
-                                                </form>
-
-                                            </div>
+                                        </div>
                                         </div>
 
                                     </td>
