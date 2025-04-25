@@ -43,41 +43,37 @@ class SalesProductController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'customer_id' => 'required|exists:customers,id',
             'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|numeric|min:1',
-            'unit_price' => 'required|numeric',
-            'discount' => 'nullable|numeric',
-            'total_price' => 'required|numeric',
+            'quantity' => 'required|integer|min:1',
         ]);
 
-        $idConta = auth()->user()->id_conta;
+        $product = Product::findOrFail($request->product_id);
 
-        // Buscar o produto
-        $product = Product::find($request->product_id);
-
-        if ($product->amount < $request->quantity) {
-            return redirect()->back()->withErrors(['quantity' => 'Quantidade em estoque insuficiente.']);
+        if ($request->quantity > $product->stock) {
+            return redirect()->back()->with('error', 'Quantidade em estoque insuficiente.');
         }
 
-        // Registrar a venda
-        $saleProduct = new SalesProduct();
-        $saleProduct->customer_id = $request->customer_id;
-        $saleProduct->product_id = $request->product_id;
-        $saleProduct->quantity = $request->quantity;
-        $saleProduct->unit_price = $request->unit_price;
-        $saleProduct->discount = $request->discount;
-        $saleProduct->total_price = $request->total_price;
-        $saleProduct->id_conta = $idConta;
-        $saleProduct->save();
+        $unit_price = $product->price;
+        $total_price = ($unit_price * $request->quantity) - $request->discount;
 
-        $product->amount -= $request->quantity;
+        // Cadastra a venda
+        Sale::create([
+            'customer_id' => $request->customer_id,
+            'product_id' => $request->product_id,
+            'quantity' => $request->quantity,
+            'unit_price' => $unit_price,
+            'total_price' => $total_price,
+            'status' => 'pending',
+        ]);
+
+        // Atualiza o estoque
+        $product->stock -= $request->quantity;
         $product->save();
 
-        return redirect()->route('sales_product.index')->with('success', 'Venda registrada com sucesso!');
+        return redirect()->route('sales.index')->with('success', 'Venda registrada com sucesso!');
     }
-
 
     public function destroy($id)
 {

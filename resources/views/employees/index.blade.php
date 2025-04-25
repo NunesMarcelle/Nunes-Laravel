@@ -85,7 +85,7 @@
                                 <tr>
                                     <td>{{ $employee->name }}</td>
                                     <td>{{ $employee->position }}</td>
-                                    <td>{{ $employee->cpf }}</td>
+                                    <td>{{ substr($employee->cpf, 0, 3) . '.' . substr($employee->cpf, 3, 3) . '.' . substr($employee->cpf, 6, 3) . '-' . substr($employee->cpf, 9, 2) }}</td>
 
                                     <td>
                                         <span class="badge badge-{{ $employee->status == 'active' ? 'success' : 'secondary' }}">
@@ -176,6 +176,12 @@
                                                         <input type="text" name="position" class="form-control" value="{{ $employee->position }}" required>
                                                     </div>
 
+                                                    <div class="form-group">
+                                                        <label>CPF</label>
+                                                        <input type="text" name="cpf" class="form-control" value="{{ $employee->cpf }}"  required maxlength="14">
+                                                    </div>
+
+
 
                                                     <div class="form-group">
                                                         <label>Status</label>
@@ -250,12 +256,13 @@
 
                     <div class="form-group">
                         <label>CPF</label>
-                        <input type="text" name="cpf" class="form-control" required>
+                        <input type="text" name="cpf" id="cpf" class="form-control" required maxlength="11">
                     </div>
+
 
                     <div class="form-group">
                         <label>Telefone</label>
-                        <input type="text" name="phone" class="form-control" required>
+                        <input type="text" name="telefone" class="form-control telefone" maxlength="11">
                     </div>
 
                     <div class="form-group">
@@ -279,6 +286,18 @@
         </form>
     </div>
 </div>
+
+<script>
+    $(document).ready(function(){
+        $('#cpf').mask('000.000.000-00');
+        $('#telefone').mask('(00) 00000-0000');
+
+        // Se tiver mais de um campo com o mesmo ID (o que não é recomendado), use classe:
+        $('.cpf').mask('000.000.000-00');
+        $('.telefone').mask('(00) 00000-0000');
+    });
+</script>
+
 
 @endsection
 

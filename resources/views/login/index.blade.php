@@ -48,9 +48,19 @@
                 <!-- Imagem -->
                 <div class="col-md-7 d-none d-md-block" style="background-image: url('{{ asset('img/Tech.jpg') }}'); background-size: cover; background-position: center;"></div>
 
+
+
                 <!-- Formulário -->
                 <div class="col-md-5">
+                    @if ($errors->any())
+                    <div class="alert alert-danger">
+                        @foreach ($errors->all() as $error)
+                            <p class="mb-0">{{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
                     <div class="p-4">
+
                         <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">Bem-vindo de volta!</h1>
                         </div>
@@ -81,6 +91,9 @@
             </div>
         </div>
     </div>
+
+
+
 
     <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
