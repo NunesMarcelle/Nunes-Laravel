@@ -12,11 +12,9 @@ class Employee extends Model
     protected $fillable = [
         'id_conta',
         'name',
-        'email',
+        'cpf',
         'phone',
         'position',
-        'salary',
-        'access_level',
         'status',
     ];
 }

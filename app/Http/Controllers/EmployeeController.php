@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Employee;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -42,27 +43,47 @@ class EmployeeController extends Controller
     {
         $request->validate([
             'name'    => 'required|string|max:100',
-            'email'         => 'required|email|unique:employees,email',
-            'access_level'  => 'required|in:admin,funcionario',
+            'cpf'         => 'nullable|required|max:11',
             'phone'         => 'nullable|numeric',
             'position'      => 'required|string|max:100',
-            'salary'        => 'required|numeric',
             'status'        => 'required|in:active,inactive',
         ]);
 
         Employee::create([
             'id_conta'      => Auth::user()->id_conta,
             'name'    => $request->name,
-            'email'         => $request->email,
-            'access_level'  => $request->access_level,
+            'cpf'         => $request->cpf,
             'phone'         => $request->phone,
             'position'      => $request->position,
-            'salary'        => $request->salary,
             'status'        => $request->status,
         ]);
 
         return redirect()->route('employees.index')->with('success', 'Funcionário criado com sucesso!');
     }
+
+    public function createAccess(Request $request, $id)
+{
+    $employee = Employee::findOrFail($id);
+
+    $user = new User();
+    $user->name = $employee->name;
+    $user->company_name = auth()->user()->company_name;
+    $user->id_conta = auth()->user()->id_conta;
+    $user->email = $request->email;
+    $user->password = Hash::make($request->password);
+
+    if ($request->hasFile('img')) {
+        // Salva a imagem na pasta "public/users" e armazena o caminho relativo
+        $imagePath = $request->file('img')->store('users', 'public');
+        // Armazena no banco apenas o caminho relativo dentro de "storage"
+        $user->img = $imagePath;
+    }
+
+    $user->save();
+
+    return redirect()->back()->with('success', 'Acesso criado com sucesso!');
+}
+
 
 
 

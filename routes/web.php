@@ -36,6 +36,7 @@ Route::post('/employees', [EmployeeController::class, 'store'])->name('employees
 Route::put('/employees/{id}', [EmployeeController::class, 'update'])->name('employees.update');
 Route::get('/employees/relatorio/pdf', [EmployeeController::class, 'gerarRelatorioPDF'])->name('employees.relatorio.pdf');
 Route::delete('/employees/{sales_service}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
+Route::post('/employees/{id}/create-access', [EmployeeController::class, 'createAccess'])->name('employees.createAccess');
 
 
 Route::get('/sales_service', [SalesServiceController::class, 'index'])->name('sales_service.index');

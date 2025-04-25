@@ -15,12 +15,10 @@ return new class extends Migration
             $table->id();
             $table->integer('id_conta');
             $table->string('name');
-            $table->enum('access_level', ['admin', 'funcionario'])->default('funcionario');
-            $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->string('email')->unique();
+            $table->string('cpf')->unique();
             $table->string('phone')->nullable();
             $table->string('position')->nullable();
-            $table->decimal('salary', 10, 2)->nullable();
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
         });
     }

@@ -40,7 +40,7 @@
                         <img src="{{ asset('storage/' . Auth::user()->img) }}" alt="Imagem do usuário"
                              style="width: 100%; height: 100%; object-fit: cover;">
                     @else
-                        <img src="{{ asset('storage/default-avatar.jpg') }}" alt="Imagem padrão"
+                        <img src="{{ asset('storage/default-avatar.png') }}" alt="Imagem padrão"
                              style="width: 100%; height: 100%; object-fit: cover;">
                     @endif
                 </div>

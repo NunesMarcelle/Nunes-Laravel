@@ -32,13 +32,13 @@
                         rows.forEach(row => {
                             let name = row.cells[0].textContent.toLowerCase();
                             let email = row.cells[1].textContent.toLowerCase();
-                            let role = row.cells[2].textContent.toLowerCase();
+                            let position = row.cells[2].textContent.toLowerCase();
                             let status = row.cells[3].textContent.toLowerCase();
 
                             if (
                                 name.includes(query) ||
                                 email.includes(query) ||
-                                role.includes(query) ||
+                                position.includes(query) ||
                                 status.includes(query)
                             ) {
                                 row.style.display = "";
@@ -74,9 +74,8 @@
                         <thead class="thead-light">
                             <tr>
                                 <th>Nome</th>
-                                <th>Email</th>
                                 <th>Cargo</th>
-                                <th>Salário</th>
+                                <th>CPF</th>
                                 <th>Status</th>
                                 <th class="text-center">Ações</th>
                             </tr>
@@ -85,9 +84,9 @@
                             @foreach($employees as $employee)
                                 <tr>
                                     <td>{{ $employee->name }}</td>
-                                    <td>{{ $employee->email }}</td>
                                     <td>{{ $employee->position }}</td>
-                                    <td>R${{ $employee->salary }}</td>
+                                    <td>{{ $employee->cpf }}</td>
+
                                     <td>
                                         <span class="badge badge-{{ $employee->status == 'active' ? 'success' : 'secondary' }}">
                                             {{ $employee->status == 'active' ? 'Ativo' : 'Inativo' }}
@@ -101,8 +100,57 @@
                                         <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteEmployeeModal-{{ $employee->id }}">
                                             <i class="fas fa-trash"></i>
                                         </button>
+
+                                        <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#createAccessModal-{{ $employee->id }}">
+                                            <i class="fas fa-user-plus"></i>
+                                        </button>
                                     </td>
                                 </tr>
+                                <div class="modal fade" id="createAccessModal-{{ $employee->id }}" tabindex="-1" role="dialog" aria-labelledby="createAccessLabel-{{ $employee->id }}" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                      <form action="{{ route('employees.createAccess', $employee->id) }}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="createAccessLabel-{{ $employee->id }}">Criar Acesso</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                                              <span aria-hidden="true">&times;</span>
+                                            </button>
+                                          </div>
+
+                                          <div class="modal-body">
+                                            <div class="form-group">
+                                              <label for="name">Nome</label>
+                                              <input type="text" class="form-control" name="name" value="{{ $employee->name }}" readonly>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="company_name">Empresa</label>
+                                                <input type="text" class="form-control" name="company_name" value="{{ auth()->user()->company_name }}" readonly>
+                                            </div>
+
+                                            <div class="form-group">
+                                              <label for="email">E-mail</label>
+                                              <input type="email" class="form-control" name="email" required>
+                                            </div>
+                                            <div class="form-group">
+                                              <label for="password">Senha</label>
+                                              <input type="password" class="form-control" name="password" required>
+                                            </div>
+                                            <div class="form-group">
+                                              <label for="img">Imagem</label>
+                                              <input type="file" class="form-control-file" name="img">
+                                            </div>
+                                          </div>
+
+                                          <div class="modal-footer">
+                                            <button type="submit" class="btn btn-success">Criar</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                          </div>
+                                        </div>
+                                      </form>
+                                    </div>
+                                  </div>
+
 
                                 {{-- Modal Editar --}}
                                 <div class="modal fade" id="editEmployeeModal-{{ $employee->id }}" tabindex="-1" role="dialog">
@@ -122,19 +170,12 @@
                                                         <label>Nome</label>
                                                         <input type="text" name="name" class="form-control" value="{{ $employee->name }}" required>
                                                     </div>
-                                                    <div class="form-group">
-                                                        <label>Email</label>
-                                                        <input type="email" name="email" class="form-control" value="{{ $employee->email }}" required>
-                                                    </div>
+
                                                     <div class="form-group">
                                                         <label>Cargo</label>
                                                         <input type="text" name="position" class="form-control" value="{{ $employee->position }}" required>
                                                     </div>
 
-                                                    <div class="form-group">
-                                                        <label>Salário</label>
-                                                        <input type="text" name="salary" class="form-control" value="{{ $employee->salary }}" required>
-                                                    </div>
 
                                                     <div class="form-group">
                                                         <label>Status</label>
@@ -208,8 +249,8 @@
 
 
                     <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" name="email" class="form-control" required>
+                        <label>CPF</label>
+                        <input type="text" name="cpf" class="form-control" required>
                     </div>
 
                     <div class="form-group">
@@ -223,24 +264,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Salário</label>
-                        <input type="number" name="salary" class="form-control" required>
-                    </div>
-
-
-                    <div class="form-group">
                         <label>Status</label>
                         <select name="status" class="form-control">
                             <option value="active">Ativo</option>
                             <option value="inactive">Inativo</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Nível de acesso</label>
-                        <select name="access_level" class="form-control">
-                            <option value="admin">Admin</option>
-                            <option value="funcionario">Funcionário</option>
                         </select>
                     </div>
                 </div>
@@ -252,4 +279,7 @@
         </form>
     </div>
 </div>
+
 @endsection
+
+
