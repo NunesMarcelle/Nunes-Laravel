@@ -51,7 +51,7 @@ class SalesProductController extends Controller
 
         $product = Product::findOrFail($request->product_id);
 
-        if ($request->quantity > $product->stock) {
+        if ($request->quantity > $product->amount) {
             return redirect()->back()->with('error', 'Quantidade em estoque insuficiente.');
         }
 
@@ -59,7 +59,8 @@ class SalesProductController extends Controller
         $total_price = ($unit_price * $request->quantity) - $request->discount;
 
         // Cadastra a venda
-        Sale::create([
+        SalesProduct::create([
+            'id_conta' => Auth::user()->id_conta,
             'customer_id' => $request->customer_id,
             'product_id' => $request->product_id,
             'quantity' => $request->quantity,
@@ -69,10 +70,10 @@ class SalesProductController extends Controller
         ]);
 
         // Atualiza o estoque
-        $product->stock -= $request->quantity;
+        $product->amount -= $request->quantity;
         $product->save();
 
-        return redirect()->route('sales.index')->with('success', 'Venda registrada com sucesso!');
+        return redirect()->route('sales_product.index')->with('success', 'Venda registrada com sucesso!');
     }
 
     public function destroy($id)

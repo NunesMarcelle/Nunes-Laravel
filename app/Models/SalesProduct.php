@@ -12,6 +12,8 @@ class SalesProduct extends Model
     protected $table = 'sales_product';
 
     protected $fillable = [
+        'id_conta',
+        'customer_id',
         'sale_id',
         'product_id',
         'quantity',
