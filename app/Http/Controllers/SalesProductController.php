@@ -78,48 +78,28 @@ class SalesProductController extends Controller
 
     public function generateBoleto($id)
 {
-    // Buscar a venda pela ID
-    $sale = SalesProduct::findOrFail($id);
+    try {
+        $sale = SalesProduct::findOrFail($id);
+        $customer = $sale->customer;
 
-    // Buscar o cliente correspondente à venda
-    $customer = Customer::findOrFail($sale->customer_id);  // Assume que 'customer_id' é o relacionamento com o cliente
+        $payment = $this->asaasService->createBoleto([
+            'customer' => $customer->asaas_id,
+            'value' => $sale->total_price,
+            'dueDate' => now()->addDays(7)->format('Y-m-d'),
+            'billingType' => 'BOLETO',
+            'description' => 'Pagamento da venda ID: '.$sale->id,
+        ]);
 
-    // Verificar se o cliente tem o asaas_id
-    if (!$customer->asaas_id) {
-        return redirect()->back()->with('error', 'Cliente não possui cadastro no Asaas.');
+        // Aqui ajustamos para validar o retorno
+        if (isset($payment->id)) {
+            return redirect()->route('sales_product.index')->with('success', 'Boleto gerado com sucesso!');
+        } else {
+            return redirect()->route('sales_product.index')->with('error', 'Erro ao gerar boleto.');
+        }
+
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Erro ao gerar boleto: ' . $e->getMessage());
     }
-
-    // Preparar os dados para o boleto
-    $payload = [
-        "customer" => $customer->asaas_id,  // Pega o asaas_id do cliente no banco
-        "billingType" => "BOLETO",
-        "value" => $sale->total_price,
-        "dueDate" => now()->addDays(7)->toDateString(),
-        "description" => "Pagamento referente à venda #{$sale->id}",
-    ];
-
-    // Enviar a solicitação para a API do Asaas
-    $response = Http::withHeaders([
-        'Authorization' => 'Bearer ' . env('ASAAS_SANDBOX_API_KEY'),
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json',
-    ])->post('https://sandbox.asaas.com/api/v3/payments', $payload);
-
-    if ($response->successful()) {
-        $payment = $response->json();
-
-        // Salvar as informações do boleto gerado
-        $sale->asaas_payment_id = $payment['id'];
-        $sale->save();
-
-        return redirect()->back()->with('success', 'Boleto gerado com sucesso!');
-    }
-
-    // Se houver erro, exibir mensagem
-    $error = $response->json();
-    $message = $error['errors'][0]['description'] ?? 'Erro desconhecido ao gerar boleto.';
-
-    return redirect()->back()->with('error', 'Erro ao gerar boleto: ' . $message);
 }
 
 

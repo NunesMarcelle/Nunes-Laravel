@@ -66,8 +66,11 @@ class CustomerController extends Controller
             'phone' => $request->input('phone') ?? '',
             'birthDate' => $request->input('birth_date') ?? null,
             'status' => $request->input('status'),
-            'cpf' => $request->input('cpf'),
+            'cpfCnpj' => preg_replace('/[^0-9]/', '', $request->input('cpf')),
         ]);
+
+        Log::info('Resposta do Asaas ao criar cliente: ' . $response->body());
+
 
         if ($response->successful()) {
             $asaasId = $response->json('id');
@@ -80,7 +83,7 @@ class CustomerController extends Controller
                     'birth_date' => $request->birth_date,
                     'status' => $request->status,
                     'asaas_id' => $asaasId,
-                    'cpf' => $request->cpf,
+                    'cpfCnpj' => $request->cpf,
                 ]);
                 $customer->save();
 

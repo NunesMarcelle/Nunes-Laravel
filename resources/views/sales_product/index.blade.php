@@ -240,6 +240,21 @@
                         </div>
 
                         <div class="form-group col-md-4">
+                            <label for="billingType">Forma de pagamento</label>
+                            <select name="billingType" id="billingType" class="form-control" required>
+                                <option value="">Selecione</option>
+                                <option value="CREDIT_CARD">Cartão de Crédito</option>
+                                <option value="PIX">Pix</option>
+                                <option value="BOLETO">Boleto</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-4">
+                            <label>Data de vencimento</label>
+                            <input type="date" name="dueDate" class="form-control" id="dueDate" required>
+                        </div>
+
+                        <div class="form-group col-md-4">
                             <label>Preço Unitário</label>
                             <input type="number" step="0.01" name="unit_price" class="form-control" id="unit_price" readonly required>
                         </div>
