@@ -66,8 +66,8 @@
             @endif
 
             <div class="table-responsive">
-                @if($sales->count())
-                    <table class="table table-hover table-bordered" id="salesTable">
+                @if($sales_products->count())
+                <table class="table table-hover table-bordered" id="salesTable">
                         <thead class="thead-light">
                             <tr>
                                 <th> Cliente</th>
@@ -79,7 +79,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($sales as $sale)
+                            @foreach($sales_products as $sale)
                                 <tr>
                                     <td>{{ $sale->customer->name }}</td>
                                     <td>{{ $sale->product->name }}</td>
@@ -109,6 +109,15 @@
                                                 </button>
                                             </form>
                                         @endif
+
+                                        <form action="{{ route('sales_product.generateBoleto', $sale->id) }}" style="display:inline-block;" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-info" onclick="return confirm('Gerar boleto para esta venda?')">
+                                                <i class="fas fa-barcode"></i> Gerar Boleto
+                                            </button>
+                                        </form>
+
+
 
                                     </td>
                                 </tr>

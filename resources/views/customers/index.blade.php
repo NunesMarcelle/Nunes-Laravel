@@ -215,9 +215,14 @@
 
                 <div class="modal-body">
                     <div class="form-row">
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-3">
                             <label for="name">Nome</label>
                             <input type="text" name="name" class="form-control" required>
+                        </div>
+
+                        <div class="form-group col-md-3">
+                            <label for="name">CPF</label>
+                            <input type="text" name="cpf" class="form-control" required>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="email">E-mail</label>

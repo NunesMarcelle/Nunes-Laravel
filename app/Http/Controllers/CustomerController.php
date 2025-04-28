@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Rules\Cpf;
 use Illuminate\Http\Request;
-use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
-use Dompdf\Dompdf;
-use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Support\Facades\Http;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Dompdf\Options;
+use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
 {
@@ -30,7 +31,7 @@ class CustomerController extends Controller
         $options->set('isHtml5ParserEnabled', true);
         $options->set('isRemoteEnabled', true);
 
-        $dompdf = new Dompdf($options);
+        $dompdf = new \Dompdf\Dompdf($options);
 
         $html = view('customers.relatorio', compact('clientes'))->render();
 
@@ -41,55 +42,93 @@ class CustomerController extends Controller
         return $dompdf->stream('relatorio-clientes.pdf', ['Attachment' => false]);
     }
 
-
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:customers,email',
-            'phone' => 'nullable|string|max:20',
-            'birth_date' => 'nullable|date',
-            'status' => 'required|in:active,inactive',
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:customers,email',
+        'phone' => 'nullable|string|max:20',
+        'birth_date' => 'nullable|date',
+        'status' => 'required|in:active,inactive',
+        'cpf' => ['required', new Cpf],
+    ]);
+
+    $asaasAccessToken = env('ASAAS_ACCESS_TOKEN', '$aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjM5MDllNjU2LWY0YmUtNDhmZi1hODcwLTViMjM5MDM3ZTc3Mjo6JGFhY2hfZTdmMDRlODItZjVhNi00MmJjLWJlOWMtMGZmNTVlOWY1MTM1');
+
+    try {
+        $response = Http::withHeaders([
+            'Accept' => 'application/json',
+            'access_token' => $asaasAccessToken,
+            'Content-Type' => 'application/json',
+        ])->post('https://api-sandbox.asaas.com/v3/customers', [
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone') ?? '',
+            'birthDate' => $request->input('birth_date') ?? null,
+            'status' => $request->input('status'),
+            'cpf' => $request->input('cpf'),
         ]);
 
-        Customer::create([
-            'id_conta' => Auth::user()->id_conta,
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'birth_date' => $request->birth_date,
-            'status' => $request->status,
-        ]);
+        if ($response->successful()) {
+            $asaasId = $response->json('id');
+            if ($asaasId) {
+                $customer = new Customer([
+                    'id_conta' => Auth::user()->id_conta,
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'phone' => $request->phone,
+                    'birth_date' => $request->birth_date,
+                    'status' => $request->status,
+                    'asaas_id' => $asaasId,
+                    'cpf' => $request->cpf,
+                ]);
+                $customer->save();
 
-        return redirect()->route('customers.index')->with('success', 'Cliente cadastrado com sucesso!');
+                return redirect()->route('customers.index')->with('success', 'Cliente cadastrado com sucesso!');
+            } else {
+                Log::error('Erro: ID do cliente não encontrado na resposta do Asaas.');
+                return redirect()->route('customers.index')->with('error', 'Erro ao obter ID do cliente do Asaas.');
+            }
+        } else {
+            $statusCode = $response->status();
+            $errorDetails = $response->json();
+            Log::error("Erro ao criar cliente no Asaas (Status: {$statusCode}): " . json_encode($errorDetails));
+
+            $errorDescription = $errorDetails['errors'][0]['description'] ?? 'Erro desconhecido.';
+            return redirect()->route('customers.index')->with('error', "Erro ao criar cliente no Asaas: {$errorDescription}");
+        }
+    } catch (\Exception $e) {
+        Log::error('Exceção ao criar cliente no Asaas: ' . $e->getMessage());
+        return redirect()->route('customers.index')->with('error', 'Erro interno ao criar cliente.');
     }
+}
+
+
 
     public function show(Customer $customer)
     {
         return view('customers.show', compact('customer'));
     }
 
+    public function update(Request $request, Customer $customer)
+    {
+        $request->validate([
+            'name'       => 'string|max:255',
+            'email'      => 'email',
+            'phone'      => 'nullable|string|max:20',
+            'birth_date' => 'nullable|date',
+            'status'     => 'in:active,inactive',
+        ]);
 
-    public function update(Request $request, $id)
-{
-    $request->validate([
-        'name' => 'string|max:255',
-        'email' => 'email',
-        'phone' => 'nullable|string|max:20',
-        'birth_date' => 'nullable|date',
-        'status' => 'in:active,inactive',
-    ]);
+        $customer->update($request->only(['name', 'email', 'phone', 'birth_date', 'status']));
 
-    $customer = Customer::findOrFail($id); // <-- Carrega o cliente
-
-    $customer->update($request->all());
-
-    return redirect()->route('customers.index')->with('success', 'Cliente atualizado com sucesso!');
-}
+        return redirect()->route('customers.index')->with('success', 'Cliente atualizado com sucesso!');
+    }
 
     public function destroy(Customer $customer)
     {
         $customer->delete();
+
         return redirect()->route('customers.index')->with('success', 'Cliente removido com sucesso!');
     }
 }

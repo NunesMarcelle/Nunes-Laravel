@@ -17,6 +17,8 @@ class Customer extends Model
         'phone',
         'birth_date',
         'status',
+        'asaas_id',
+        'cpf',
     ];
 
 }
