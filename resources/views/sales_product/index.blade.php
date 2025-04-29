@@ -112,7 +112,7 @@
 
                                         <form action="{{ route('sales_product.generateBoleto', $sale->id) }}" style="display:inline-block;" method="POST">
                                             @csrf
-                                            <button type="submit" class="btn btn-sm btn-info" onclick="return confirm('Gerar boleto para esta venda?')">
+                                            <button type="submit" class="btn btn-sm btn-info">
                                                 <i class="fas fa-barcode"></i> Gerar Boleto
                                             </button>
                                         </form>

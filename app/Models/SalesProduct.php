@@ -20,7 +20,9 @@ class SalesProduct extends Model
         'unit_price',
         'discount',
         'total_price',
-        'empresa_id'
+        'billingType',
+        'dueDate',
+
     ];
 
     // Relacionamentos

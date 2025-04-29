@@ -75,32 +75,58 @@ class SalesProductController extends Controller
 
         return redirect()->back()->with('success', 'Pagamento recebido com sucesso!');
     }
-
     public function generateBoleto($id)
-{
-    try {
-        $sale = SalesProduct::findOrFail($id);
-        $customer = $sale->customer;
+    {
+        try {
+            $sale = SalesProduct::findOrFail($id);
+            $customer = $sale->customer;
 
-        $payment = $this->asaasService->createBoleto([
-            'customer' => $customer->asaas_id,
-            'value' => $sale->total_price,
-            'dueDate' => now()->addDays(7)->format('Y-m-d'),
-            'billingType' => 'BOLETO',
-            'description' => 'Pagamento da venda ID: '.$sale->id,
-        ]);
+            // Verifica se o cliente tem cadastro válido no Asaas
+            if (!$customer || !$customer->asaas_id) {
+                return redirect()->back()->with('error', 'Cliente não possui cadastro válido no Asaas.');
+            }
 
-        // Aqui ajustamos para validar o retorno
-        if (isset($payment->id)) {
-            return redirect()->route('sales_product.index')->with('success', 'Boleto gerado com sucesso!');
-        } else {
-            return redirect()->route('sales_product.index')->with('error', 'Erro ao gerar boleto.');
+            // Dados do cliente e venda para o boleto
+            $data = [
+                'customer' => $customer->asaas_id,
+                'value' => $sale->total_price,
+                'dueDate' => now()->addDays(7)->format('Y-m-d'),
+                'billingType' => 'BOLETO',
+                'description' => 'Pagamento da venda ID: ' . $sale->id,
+            ];
+
+            // Enviar a requisição diretamente para a API do Asaas
+            $response = Http::withToken('$aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjM5MDllNjU2LWY0YmUtNDhmZi1hODcwLTViMjM5MDM3ZTc3Mjo6JGFhY2hfZTdmMDRlODItZjVhNi00MmJjLWJlOWMtMGZmNTVlOWY1MTM1')
+                ->post('https://api-sandbox.asaas.com/v3/payments', $data);
+
+            // Logs para verificar a resposta da API
+            \Log::debug('Resposta da API do Asaas', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+                'headers' => $response->headers()
+            ]);
+
+            // Decodifica a resposta da API
+            $payment = json_decode($response->body());
+
+            // Verifica se existe um id de pagamento
+            if (isset($payment->id)) {
+                return redirect($payment->bankSlipUrl); // Redireciona para o boleto gerado
+            } elseif (isset($payment->errors)) {
+                // Exibe os erros detalhados retornados pela API
+                \Log::debug('Erros retornados pela API', $payment->errors);
+                return redirect()->back()->with('error', 'Erro ao gerar boleto: ' . json_encode($payment->errors));
+            } else {
+                // Exibe a resposta completa em caso de erro desconhecido
+                return redirect()->back()->with('error', 'Erro desconhecido ao gerar boleto. Resposta completa: ' . $response->body());
+            }
+
+        } catch (\Exception $e) {
+            // Captura erros na execução do código
+            \Log::error('Erro ao gerar boleto', ['exception' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Erro ao gerar boleto: ' . $e->getMessage());
         }
-
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Erro ao gerar boleto: ' . $e->getMessage());
     }
-}
 
 
     public function destroy($id)
