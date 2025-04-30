@@ -53,7 +53,7 @@ Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->nam
 
 Route::get('/sales_product', [SalesProductController::class, 'index'])->name('sales_product.index');
 Route::post('/sales_product', [SalesProductController::class, 'store'])->name('sales_product.store');
-Route::post('/sales-product/{id}/generate-boleto', [SalesProductController::class, 'generateBoleto'])->name('sales_product.generateBoleto');
+Route::post('/sales_product/{id}/generate-boleto', [SalesProductController::class, 'generateBoleto'])->name('sales_product.generateBoleto');
 Route::delete('/sales_product/{id}', [SalesProductController::class, 'destroy'])->name('sales_product.destroy');
 Route::patch('/sales/{id}/mark-paid', [SalesProductController::class, 'markAsPaid'])->name('sales.markPaid');
 

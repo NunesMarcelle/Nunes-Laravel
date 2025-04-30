@@ -110,12 +110,13 @@
                                             </form>
                                         @endif
 
-                                        <form action="{{ route('sales_product.generateBoleto', $sale->id) }}" style="display:inline-block;" method="POST">
+                                        <form action="{{ route('sales_product.generateBoleto', $sale->id) }}" method="POST" class="d-inline">
                                             @csrf
-                                            <button type="submit" class="btn btn-sm btn-info">
-                                                <i class="fas fa-barcode"></i> Gerar Boleto
+                                            <button type="submit" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-file-invoice"></i> Gerar Boleto
                                             </button>
                                         </form>
+
 
 
 

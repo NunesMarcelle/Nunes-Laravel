@@ -8,6 +8,7 @@ use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 
 class SalesProductController extends Controller
@@ -81,53 +82,50 @@ class SalesProductController extends Controller
             $sale = SalesProduct::findOrFail($id);
             $customer = $sale->customer;
 
-            // Verifica se o cliente tem cadastro válido no Asaas
             if (!$customer || !$customer->asaas_id) {
                 return redirect()->back()->with('error', 'Cliente não possui cadastro válido no Asaas.');
             }
 
-            // Dados do cliente e venda para o boleto
             $data = [
-                'customer' => $customer->asaas_id,
-                'value' => $sale->total_price,
-                'dueDate' => now()->addDays(7)->format('Y-m-d'),
+                'customer'    => $customer->asaas_id,
+                'value'       => $sale->total_price,
+                'dueDate'     => now()->addDays(7)->format('Y-m-d'),
                 'billingType' => 'BOLETO',
                 'description' => 'Pagamento da venda ID: ' . $sale->id,
             ];
 
-            // Enviar a requisição diretamente para a API do Asaas
-            $response = Http::withToken('$aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjM5MDllNjU2LWY0YmUtNDhmZi1hODcwLTViMjM5MDM3ZTc3Mjo6JGFhY2hfZTdmMDRlODItZjVhNi00MmJjLWJlOWMtMGZmNTVlOWY1MTM1')
-                ->post('https://api-sandbox.asaas.com/v3/payments', $data);
+            $asaasAccessToken = env('ASAAS_ACCESS_TOKEN', '$aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjM5MDllNjU2LWY0YmUtNDhmZi1hODcwLTViMjM5MDM3ZTc3Mjo6JGFhY2hfZTdmMDRlODItZjVhNi00MmJjLWJlOWMtMGZmNTVlOWY1MTM1');
 
-            // Logs para verificar a resposta da API
-            \Log::debug('Resposta da API do Asaas', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-                'headers' => $response->headers()
-            ]);
+            $response = Http::withHeaders([
+                'Accept' => 'application/json',
+                'access_token' => $asaasAccessToken,
+                'Content-Type' => 'application/json',
+            ])->post('https://api-sandbox.asaas.com/v3/payments', $data);
 
-            // Decodifica a resposta da API
-            $payment = json_decode($response->body());
+            Log::info('Resposta da API do Asaas ao gerar boleto: ' . $response->body());
 
-            // Verifica se existe um id de pagamento
-            if (isset($payment->id)) {
-                return redirect($payment->bankSlipUrl); // Redireciona para o boleto gerado
-            } elseif (isset($payment->errors)) {
-                // Exibe os erros detalhados retornados pela API
-                \Log::debug('Erros retornados pela API', $payment->errors);
-                return redirect()->back()->with('error', 'Erro ao gerar boleto: ' . json_encode($payment->errors));
+            if ($response->successful()) {
+                $payment = $response->json();
+
+                if (isset($payment['id'])) {
+                    return redirect($payment['bankSlipUrl']);
+                } else {
+                    $errorDetails = $payment['errors'][0]['description'] ?? 'Erro desconhecido.';
+                    return redirect()->back()->with('error', "Erro ao gerar boleto: {$errorDetails}");
+                }
             } else {
-                // Exibe a resposta completa em caso de erro desconhecido
-                return redirect()->back()->with('error', 'Erro desconhecido ao gerar boleto. Resposta completa: ' . $response->body());
-            }
+                $statusCode = $response->status();
+                $errorDetails = $response->json();
+                Log::error("Erro ao gerar boleto no Asaas (Status: {$statusCode}): " . json_encode($errorDetails));
 
+                $errorDescription = $errorDetails['errors'][0]['description'] ?? 'Erro desconhecido.';
+                return redirect()->back()->with('error', "Erro ao gerar boleto no Asaas: {$errorDescription}");
+            }
         } catch (\Exception $e) {
-            // Captura erros na execução do código
-            \Log::error('Erro ao gerar boleto', ['exception' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Erro ao gerar boleto: ' . $e->getMessage());
+            Log::error('Exceção ao gerar boleto no Asaas: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Erro interno ao gerar boleto.');
         }
     }
-
 
     public function destroy($id)
     {
