@@ -42,6 +42,7 @@ Route::post('/employees/{id}/create-access', [EmployeeController::class, 'create
 Route::get('/sales_service', [SalesServiceController::class, 'index'])->name('sales_service.index');
 Route::post('/sales_service', [SalesServiceController::class, 'store'])->name('sales_service.store');
 Route::put('/sales_service/{id}', [SalesServiceController::class, 'update'])->name('sales_service.update');
+Route::post('/sales-service/{id}/generate-boleto', [SalesServiceController::class, 'generateBoleto'])->name('sales_service.generateBoleto');
 Route::delete('/sales_service/{sales_service}', [SalesServiceController::class, 'destroy'])->name('sales_service.destroy');
 Route::patch('/sales-service/{id}/mark-paid', [SalesServiceController::class, 'markAsPaid'])->name('sales_service.markPaid');
 

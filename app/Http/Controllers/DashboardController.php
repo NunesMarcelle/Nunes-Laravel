@@ -45,7 +45,7 @@ class DashboardController extends Controller
 
             $total_servicos = DB::table('sales_service')
             ->where('id_conta', $id_conta)
-            ->where('status', 'completed') 
+            ->where('status', 'completed')
             ->whereMonth('created_at', date('m'))
             ->whereYear('created_at', date('Y'))
             ->sum('total_price');

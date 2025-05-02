@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\SalesService;
 use App\Models\Customer;
 use App\Models\Service;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
 
 class SalesServiceController extends Controller
 {
@@ -50,6 +53,57 @@ class SalesServiceController extends Controller
     $service->save();
 
     return redirect()->back()->with('success', 'Pagamento recebido com sucesso!');
+}
+
+public function generateBoleto($id)
+{
+    try {
+        $sale = SalesService::findOrFail($id);
+        $customer = $sale->customer;
+
+        if (!$customer || !$customer->asaas_id) {
+            return redirect()->back()->with('error', 'Cliente não possui cadastro válido no Asaas.');
+        }
+
+        $data = [
+            'customer'    => $customer->asaas_id,
+            'value'       => $sale->total_price,
+            'dueDate'     => now()->addDays(7)->format('Y-m-d'),
+            'billingType' => 'BOLETO',
+            'description' => 'Pagamento do serviço ID: ' . $sale->id,
+        ];
+
+        $asaasAccessToken = env('ASAAS_ACCESS_TOKEN', '$aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjM5MDllNjU2LWY0YmUtNDhmZi1hODcwLTViMjM5MDM3ZTc3Mjo6JGFhY2hfZTdmMDRlODItZjVhNi00MmJjLWJlOWMtMGZmNTVlOWY1MTM1');
+
+        $response = Http::withHeaders([
+            'Accept' => 'application/json',
+            'access_token' => $asaasAccessToken,
+            'Content-Type' => 'application/json',
+        ])->post('https://api-sandbox.asaas.com/v3/payments', $data);
+
+        Log::info('Resposta da API do Asaas ao gerar boleto (Serviço): ' . $response->body());
+
+        if ($response->successful()) {
+            $payment = $response->json();
+
+            if (isset($payment['id'])) {
+                return redirect($payment['bankSlipUrl']);
+            } else {
+                $errorDetails = $payment['errors'][0]['description'] ?? 'Erro desconhecido.';
+                return redirect()->back()->with('error', "Erro ao gerar boleto: {$errorDetails}");
+            }
+        } else {
+            $statusCode = $response->status();
+            $errorDetails = $response->json();
+            Log::error("Erro ao gerar boleto no Asaas (Serviço - Status: {$statusCode}): " . json_encode($errorDetails));
+
+            $errorDescription = $errorDetails['errors'][0]['description'] ?? 'Erro desconhecido.';
+            return redirect()->back()->with('error', "Erro ao gerar boleto no Asaas: {$errorDescription}");
+        }
+    } catch (\Exception $e) {
+        Log::error('Exceção ao gerar boleto no Asaas (Serviço): ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Erro interno ao gerar boleto.');
+    }
 }
 
 

@@ -112,6 +112,17 @@
                                                 <i class="fas fa-money-bill-wave"></i> Receber
                                             </button>
                                         </form>
+
+                                        @foreach($salesServices as $service)
+                                        <form action="{{ route('sales_service.generateBoleto', $service->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-warning btn-sm"
+                                                @if($service->status == 'completed') disabled @endif>
+                                                <i class="fas fa-file-invoice"></i> Gerar Boleto
+                                            </button>
+                                        </form>
+                                    @endforeach
+
                                         @endif
                                     </td>
                                 </tr>

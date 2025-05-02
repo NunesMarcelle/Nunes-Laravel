@@ -112,17 +112,13 @@
 
                                         <form action="{{ route('sales_product.generateBoleto', $sale->id) }}" method="POST" class="d-inline">
                                             @csrf
-                                            <button type="submit" class="btn btn-warning btn-sm">
+                                            <button type="submit" class="btn btn-warning btn-sm"
+                                                @if($sale->status == 'completed') disabled @endif>
                                                 <i class="fas fa-file-invoice"></i> Gerar Boleto
                                             </button>
                                         </form>
-
-
-
-
                                     </td>
                                 </tr>
-
 
 
                                 <!-- Modal Visualizar Venda -->

@@ -14,7 +14,7 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-        $employees = Employee::all();
+        $employees = Employee::where('id_conta', Auth::user()->id_conta)->get();
         return view('employees.index', compact('employees'));
     }
 
