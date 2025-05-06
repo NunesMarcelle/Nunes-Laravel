@@ -10,6 +10,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\SalesServiceController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ServiceController;
 
@@ -30,6 +31,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
     Route::put('/perfil', [PerfilController::class, 'update'])->name('perfil.update');
 });
+
+
+Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+Route::post('/subscriptions', [SubscriptionController::class, 'store'])->name('subscriptions.store');
+Route::put('/subscriptions/{id}', [SubscriptionController::class, 'update'])->name('subscriptions.update');
 
 Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
 Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
