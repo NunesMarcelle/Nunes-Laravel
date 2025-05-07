@@ -36,6 +36,7 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
 Route::post('/subscriptions', [SubscriptionController::class, 'store'])->name('subscriptions.store');
 Route::put('/subscriptions/{id}', [SubscriptionController::class, 'update'])->name('subscriptions.update');
+Route::delete('/subscriptions/{subscriptions}', [SubscriptionController::class, 'subscriptions'])->name('subscriptions.destroy');
 
 Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
 Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');

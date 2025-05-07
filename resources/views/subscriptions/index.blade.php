@@ -53,6 +53,7 @@
                                 <th>Nome</th>
                                 <th>Valor</th>
                                 <th>Duração</th>
+                                <th>Vencimento</th>
                                 <th>Status</th>
                                 <th class="text-center">Ações</th>
                             </tr>
@@ -60,9 +61,26 @@
                         <tbody>
                             @foreach($subscriptions as $subscription)
                                 <tr>
-                                    <td>{{ $subscription->nome }}</td>
+                                    <td>{{ $subscription->customer->name ?? 'Nome não disponível' }}</td>
                                     <td>R$ {{ number_format($subscription->value, 2, ',', '.') }}</td>
-                                    <td>{{ $subscription->cycle }} dias</td>
+                                    <td>
+                                        @if($subscription->cycle == 'WEEKLY')
+                                            Semanal
+                                        @elseif($subscription->cycle == 'MONTHLY')
+                                            Mensal
+                                        @elseif($subscription->cycle == 'BIMONTHLY')
+                                            Quinzenal
+                                        @elseif($subscription->cycle == 'QUARTERLY')
+                                            Trimestral
+                                        @elseif($subscription->cycle == 'SEMIANNUALLY')
+                                            Semestral
+                                        @elseif($subscription->cycle == 'YEARLY')
+                                            Anual
+                                        @else
+                                            {{ $subscription->cycle }}
+                                        @endif
+                                    </td>
+                                    <td>{{ \Carbon\Carbon::parse($subscription->next_due_date)->format('d/m/Y') }}</td>
                                     <td>
                                         <span class="badge badge-{{ $subscription->status == 'active' ? 'success' : 'secondary' }}">
                                             {{ $subscription->status == 'active' ? 'Ativa' : 'Inativa' }}
@@ -81,7 +99,7 @@
                                 {{-- Modal Editar Assinatura --}}
                                 <div class="modal fade" id="editSubscriptionModal-{{ $subscription->id }}" tabindex="-1" role="dialog">
                                     <div class="modal-dialog modal-lg">
-                                        <form method="POST" action="{{ route('signatures.update', $subscription->id) }}">
+                                        <form method="POST" action="{{ route('subscriptions.update', $subscription->id) }}">
                                             @csrf
                                             @method('PUT')
                                             <div class="modal-content">
@@ -93,16 +111,33 @@
                                                     <div class="form-row">
                                                         <div class="form-group col-md-4">
                                                             <label>Nome</label>
-                                                            <input type="text" name="nome" class="form-control" value="{{ $subscription->nome }}" required>
+                                                            <select name="customer_id" class="form-control" required>
+                                                                <option value="">Selecione um Cliente</option>
+                                                                @foreach($clientes as $cliente)
+                                                                    <option value="{{ $cliente->id }}" {{ $cliente->id == $subscription->customer_id ? 'selected' : '' }}>
+                                                                        {{ $cliente->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
                                                         </div>
+
                                                         <div class="form-group col-md-4">
                                                             <label>Valor</label>
                                                             <input type="number" step="0.01" name="valor" class="form-control" value="{{ $subscription->value }}" required>
                                                         </div>
                                                         <div class="form-group col-md-4">
                                                             <label>Duração (dias)</label>
-                                                            <input type="number" name="duracao" class="form-control" value="{{ $subscription->cycle }}" required>
+                                                            <select name="cycle" class="form-control" required>
+                                                                <option value="">Selecione a Duração</option>
+                                                                <option value="WEEKLY" {{ $subscription->cycle == 'WEEKLY' ? 'selected' : '' }}>Semanal</option>
+                                                                <option value="MONTHLY" {{ $subscription->cycle == 'MONTHLY' ? 'selected' : '' }}>Mensal</option>
+                                                                <option value="BIMONTHLY" {{ $subscription->cycle == 'BIMONTHLY' ? 'selected' : '' }}>Quinzenal</option>
+                                                                <option value="QUARTERLY" {{ $subscription->cycle == 'QUARTERLY' ? 'selected' : '' }}>Trimestral</option>
+                                                                <option value="SEMIANNUALLY" {{ $subscription->cycle == 'SEMIANNUALLY' ? 'selected' : '' }}>Semestral</option>
+                                                                <option value="YEARLY" {{ $subscription->cycle == 'YEARLY' ? 'selected' : '' }}>Anual</option>
+                                                            </select>
                                                         </div>
+
                                                         <div class="form-group col-md-12">
                                                             <label>Status</label>
                                                             <select name="status" class="form-control">
@@ -124,7 +159,7 @@
                                 {{-- Modal Excluir Assinatura --}}
                                 <div class="modal fade" id="deleteSubscriptionModal-{{ $subscription->id }}" tabindex="-1" role="dialog">
                                     <div class="modal-dialog">
-                                        <form method="POST" action="{{ route('assinaturas.destroy', $subscription->id) }}">
+                                        <form method="POST" action="{{ route('subscriptions.destroy', $subscription->id) }}">
                                             @csrf
                                             @method('DELETE')
                                             <div class="modal-content">
@@ -133,7 +168,7 @@
                                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    Tem certeza que deseja excluir a assinatura <strong>{{ $subscription->nome }}</strong>?
+                                                    Tem certeza que deseja excluir a assinatura <strong>{{ $subscription->name }}</strong>?
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="submit" class="btn btn-danger">Excluir</button>
@@ -167,22 +202,53 @@
                 <div class="modal-body">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="cliente">Selecione o Cliente</label>
-                            <select name="cliente_id" id="cliente" class="form-control" required>
+                            <label for="customer_id">Selecione o Cliente</label>
+                            <select name="customer_id" id="customer_id" class="form-control" required>
                                 <option value="">Selecione um cliente</option>
                                 @foreach ($clientes as $cliente)
-                                    <option value="{{ $cliente->id }}">{{ $cliente->nome }}</option>
+                                    <option value="{{ $cliente->id }}">{{ $cliente->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group col-md-4">
                             <label>Valor</label>
-                            <input type="number" step="0.01" name="valor" class="form-control" required>
+                            <input type="number" step="0.01" name="value" class="form-control" required>
                         </div>
+
                         <div class="form-group col-md-4">
-                            <label>Duração (dias)</label>
-                            <input type="number" name="duracao" class="form-control" required>
+                            <label>Forma de pagamento</label>
+                            <select name="billing_type" class="form-control" required>
+                                <option value="">Selecione</option>
+                                <option value="BOLETO">Boleto</option>
+                                <option value="CREDIT_CARD">Cartão de Crédito</option>
+                                <option value="PIX">Pix</option>
+                            </select>
                         </div>
+
+
+                        <div class="form-group col-md-4">
+                            <label>Descricão</label>
+                            <input type="text" name="description" class="form-control" required>
+                        </div>
+
+                        <div class="form-group col-md-4">
+                            <label>Data de vencimento</label>
+                            <input type="date" name="next_due_date" class="form-control" required>
+                        </div>
+
+                        <div class="form-group col-md-4">
+                            <label>Duração</label>
+                            <select name="cycle" class="form-control" required>
+                                <option value="">Selecione a duração</option>
+                                <option value="WEEKLY">Semanal</option>
+                                <option value="BIWEEKLY">Quinzenal (2 semanas)</option>
+                                <option value="MONTHLY">Mensal</option>
+                                <option value="QUARTERLY">Trimestral</option>
+                                <option value="SEMIANNUALLY">Semestral</option>
+                                <option value="YEARLY">Anual</option>
+                            </select>
+                        </div>
+
                         <div class="form-group col-md-12">
                             <label>Status</label>
                             <select name="status" class="form-control">

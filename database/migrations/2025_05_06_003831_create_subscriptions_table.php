@@ -10,13 +10,13 @@ return new class extends Migration {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
             $table->integer('id_conta');
-            $table->string('customer_id'); 
-            $table->enum('billing_type', ['BOLETO', 'CREDIT_CARD', 'PIX']);
+            $table->string('customer_id');
+            $table->string('billing_type');
             $table->date('next_due_date');
-            $table->decimal('value', 10, 2);
-            $table->enum('cycle', ['WEEKLY', 'MONTHLY', 'BIMONTHLY', 'QUARTERLY', 'SEMIANNUALLY', 'YEARLY']);
+            $table->integer('value');
+            $table->string('cycle');
             $table->string('description');
-            $table->enum('status', ['ACTIVE', 'INACTIVE', 'CANCELLED', 'EXPIRED'])->default('ACTIVE');
+            $table->string('status');
             $table->timestamps();
 
         });
