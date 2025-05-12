@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\SalesServiceController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ServiceController;
 
@@ -88,3 +89,6 @@ Route::post('/login', [LoginController::class, 'login'])->name('login.perform');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
+Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');
